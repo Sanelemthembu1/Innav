@@ -10,8 +10,15 @@
   },
   "include": [
     "**/*.ts",
+    "**/*.svg",
     "**/*.tsx",
+    "**/*.jsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "app/(coffee)/index.jsx",
+    "app/(tabs)/index.jsx",
+    "expo-env.d.ts",
+    "declarations.d.ts",
+    "metro.config.js",
+    "floor.svg"
   ]
 }
