@@ -108,7 +108,7 @@ const NavBar: React.FC<NavBarProps> = ({
         {routeInfo.hasRoute && (
           <View style={styles.instructionsContainer}>
             <View style={styles.instructionsHeader}>
-              <Text style={styles.instructionsTitle}>Route information</Text>
+              <Text style={styles.instructionsTitle}>Route Instructions</Text>
               <Text
                 style={styles.instructionsToggle}
                 onPress={() => setInstructionsOpen((v) => !v)}
