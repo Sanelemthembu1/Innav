@@ -1,5 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -17,6 +17,8 @@ const { width, height } = Dimensions.get("window");
 interface BodyProps {
   from: string;
   to: string;
+  // Optional callback to notify parent about the currently drawn route
+  onRouteChange?: (info: { hasRoute: boolean; steps: string[]; floor: number | null; edges?: Edge[] }) => void;
 }
 interface Edge {
   id: string;
@@ -25,7 +27,7 @@ interface Edge {
   floor: number; 
   points: { x: number | string; y: number | string }[];
 }
-export default function Body({ from, to }: BodyProps) {
+export default function Body({ from, to, onRouteChange }: BodyProps) {
   const [floorSelectorOpen, setFloorSelectorOpen] = useState(false);
   const [selectedFloor, setSelectedFloor] = useState(1); // 1, 2, 3
   const scale = useRef(new Animated.Value(1)).current;
@@ -269,6 +271,19 @@ const [imageLayout, setImageLayout] = useState({
           })
         )
       : [];
+
+  // Notify parent about route changes (steps & floor). Keep simple human-readable steps.
+  useEffect(() => {
+    if (onRouteChange) {
+      if (floorEdges.length > 0 && pathPoints.length > 0) {
+        const steps = floorEdges.map((e) => `${e.from} → ${e.to}`);
+        onRouteChange({ hasRoute: true, steps, floor: selectedFloor, edges: floorEdges });
+      } else {
+        onRouteChange({ hasRoute: false, steps: [], floor: null });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [floorEdges, pathPoints, selectedFloor]);
 
   // Dummy floor images for demonstration
   const floorImages = [

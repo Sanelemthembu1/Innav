@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link, } from "expo-router";
-import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 
 interface NavBarProps {
   showDestination: boolean;
@@ -10,6 +10,7 @@ interface NavBarProps {
   to: string;
   setFrom: (value: string) => void;
   setTo: (value: string) => void;
+  routeInfo: { hasRoute: boolean; steps: string[]; floor: number | null }; // Ensure routeInfo is defined
 }
 
 const NavBar: React.FC<NavBarProps> = ({
@@ -19,9 +20,16 @@ const NavBar: React.FC<NavBarProps> = ({
   to,
   setFrom,
   setTo,
+  routeInfo, // Destructure routeInfo
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [instructionsOpen, setInstructionsOpen] = useState(false);
+
+  useEffect(() => {
+    if (routeInfo.hasRoute) setInstructionsOpen(true);
+    else setInstructionsOpen(false);
+  }, [routeInfo.hasRoute]);
 
   return (
     <View>
@@ -93,6 +101,33 @@ const NavBar: React.FC<NavBarProps> = ({
               onChangeText={setTo}
               autoFocus
             />
+          </View>
+        )}
+
+        {/* Instruction view below inputs */}
+        {routeInfo.hasRoute && (
+          <View style={styles.instructionsContainer}>
+            <View style={styles.instructionsHeader}>
+              <Text style={styles.instructionsTitle}>Route information</Text>
+              <Text
+                style={styles.instructionsToggle}
+                onPress={() => setInstructionsOpen((v) => !v)}
+              >
+                {instructionsOpen ? "Hide" : "Show"}
+              </Text>
+            </View>
+            {instructionsOpen && (
+              <View style={styles.instructionsBody}>
+                <Text style={styles.instructionsSubtitle}>Floor: {routeInfo.floor ?? "—"}</Text>
+                <View style={{ maxHeight: 120 }}>
+                  <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={true}>
+                    {routeInfo.steps.map((s, i) => (
+                      <Text key={i} style={styles.instructionText}>{`${i + 1}. ${s}`}</Text>
+                    ))}
+                  </ScrollView>
+                </View>
+              </View>
+            )}
           </View>
         )}
       </View>
@@ -208,4 +243,26 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
+  instructionsContainer: {
+    marginTop: 10,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    borderRadius: 12,
+    padding: 10,
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+  },
+  instructionsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  instructionsTitle: { fontWeight: 'bold', fontSize: 16 },
+  instructionsToggle: { color: '#007AFF', fontWeight: '600' },
+  instructionsBody: { maxHeight: 140 },
+  instructionText: { fontSize: 13, marginVertical: 2 },
+  instructionsSubtitle: { fontSize: 13, marginBottom: 6 },
 });
