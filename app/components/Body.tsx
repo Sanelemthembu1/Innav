@@ -113,7 +113,47 @@ export default function Body({ from, to, onRouteChange }: BodyProps) {
   ).current;
 
     const handleRecenter = () => {
- 
+      if (pathPoints.length > 0) {
+        // Get min and max for x and y
+        const xs = pathPoints.map(p => p[0]);
+        const ys = pathPoints.map(p => p[1]);
+        const minX = Math.min(...xs);
+        const maxX = Math.max(...xs);
+        const minY = Math.min(...ys);
+        const maxY = Math.max(...ys);
+
+        // Get path center coordinates
+        const pathCenterX = (minX + maxX) / 2;
+        const pathCenterY = (minY + maxY) / 2;
+
+        // Screen center
+        const screenCenterX = width / 2;
+        const screenCenterY = height / 2;
+
+        // Move so that path center aligns with screen center
+        const targetX = screenCenterX - pathCenterX;
+        const targetY = screenCenterY - pathCenterY;
+
+        Animated.parallel([
+          Animated.timing(scale, {
+            toValue: scaleRef.current, // keep current zoom level
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(translateX, {
+            toValue: targetX,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(translateY, {
+            toValue: targetY,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+        ]).start();
+
+        translateRef.current = { x: targetX, y: targetY };
+      } else {
         // No path visible → reset to default center
         Animated.parallel([
           Animated.timing(scale, {
@@ -135,7 +175,7 @@ export default function Body({ from, to, onRouteChange }: BodyProps) {
 
         scaleRef.current = 1;
         translateRef.current = { x: initialX, y: initialY };
-      
+      }
     };
   // Extract path points from JSON 
   // Define floor-specific image dimensions
