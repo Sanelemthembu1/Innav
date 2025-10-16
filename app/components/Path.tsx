@@ -84,35 +84,54 @@ export default function PathOverlay({
   const AnimatedPolygon = Animated.createAnimatedComponent(Polygon);
   const arrowPoints = '0,-6 12,0 0,6'; // triangle arrow
 
-  return (
-    <Svg height="100%" width="100%" style={styles.overlay}>
-      {/* Path */}
-      <Polyline
-        points={points.map(p => p.join(',')).join(' ')}
-        fill="none"
-        stroke={strokeColor}
-        strokeWidth={strokeWidth}
-      />
+      return (
+      <Svg height="100%" width="100%" style={styles.overlay}>
+        {/* Path line */}
+        <Polyline
+          points={points.map(p => p.join(',')).join(' ')}
+          fill="none"
+          stroke={strokeColor}
+          strokeWidth={strokeWidth}
+        />
 
-      {/* Points */}
-      {points.map(([x, y], idx) => (
-        <Circle key={idx} cx={x} cy={y} r={6} fill="green" />
-      ))}
+        {/* Start point (light blue) */}
+        {points.length > 0 && (
+          <Circle
+            cx={points[0][0]}
+            cy={points[0][1]}
+            r={8}
+            fill="#87CEFA" // light blue
+            stroke="white"
+            strokeWidth={2}
+          />
+        )}
 
-      {/* Animated arrow */}
-      <AnimatedPolygon
-        points={arrowPoints}
-        fill={arrowColor}
-        originX={6} // center for rotation
-        originY={0}
-        transform={[
-          { translateX: arrowPos.x },
-          { translateY: arrowPos.y },
-          { rotate: `${arrowPos.angle}deg` },
-        ]}
-      />
-    </Svg>
-  );
+        {/* Destination point (green) */}
+        {points.length > 1 && (
+          <Circle
+            cx={points[points.length - 1][0]}
+            cy={points[points.length - 1][1]}
+            r={8}
+            fill="#32CD32" // green
+            stroke="white"
+            strokeWidth={2}
+          />
+        )}
+
+        {/* Animated arrow */}
+        <AnimatedPolygon
+          points={arrowPoints}
+          fill={arrowColor}
+          originX={6}
+          originY={0}
+          transform={[
+            { translateX: arrowPos.x },
+            { translateY: arrowPos.y },
+            { rotate: `${arrowPos.angle}deg` },
+          ]}
+        />
+      </Svg>
+    );
 }
 
 const styles = StyleSheet.create({

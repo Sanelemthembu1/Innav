@@ -108,7 +108,7 @@ const NavBar: React.FC<NavBarProps> = ({
         {routeInfo.hasRoute && (
           <View style={styles.instructionsContainer}>
             <View style={styles.instructionsHeader}>
-              <Text style={styles.instructionsTitle}>Route Instructions</Text>
+              <Text style={styles.instructionsTitle}>Path Instructions</Text>
               <Text
                 style={styles.instructionsToggle}
                 onPress={() => setInstructionsOpen((v) => !v)}
@@ -118,7 +118,13 @@ const NavBar: React.FC<NavBarProps> = ({
             </View>
             {instructionsOpen && (
               <View style={styles.instructionsBody}>
-                <Text style={styles.instructionsSubtitle}>Floor: {routeInfo.floor ?? "—"}</Text>
+                  <Text style={styles.instructionsSubtitle}>
+                    {routeInfo.floor != null
+                      ? routeInfo.floor === 1
+                        ? "Ground Floor"
+                        : `Floor: ${routeInfo.floor - 1}`
+                      : "N/A"}
+                  </Text>
                 <View style={{ maxHeight: 120 }}>
                   <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={true}>
                     {routeInfo.steps.map((s, i) => (
@@ -245,14 +251,15 @@ const styles = StyleSheet.create({
   },
   instructionsContainer: {
     marginTop: 10,
+    marginBottom: 10,
     backgroundColor: 'rgba(255,255,255,0.95)',
     borderRadius: 12,
     padding: 10,
-    elevation: 6,
+    elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
-    shadowRadius: 6,
+    shadowRadius: 3,
   },
   instructionsHeader: {
     flexDirection: 'row',

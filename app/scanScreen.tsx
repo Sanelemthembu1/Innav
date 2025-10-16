@@ -13,6 +13,7 @@ const ScanScreen = () => {
   const [showDestination, setShowDestination] = useState(false);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [routeInfo, setRouteInfo] = useState<{ hasRoute: boolean; steps: string[]; floor: number | null }>({ hasRoute: false, steps: [], floor: null });
 
   useEffect(() => {
     if (!permission?.granted) {
@@ -46,6 +47,7 @@ const ScanScreen = () => {
         to={to}
         setFrom={setFrom}
         setTo={setTo}
+        routeInfo={routeInfo} // Pass route info to NavBar
       />
 
       <TouchableWithoutFeedback

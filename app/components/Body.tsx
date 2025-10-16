@@ -112,33 +112,31 @@ export default function Body({ from, to, onRouteChange }: BodyProps) {
     })
   ).current;
 
-  const handleRecenter = () => {
-    // Center on start of path
-    const startPoint = pathPoints[0];
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const targetX = centerX - startPoint[0];
-    const targetY = centerY - startPoint[1];
-    Animated.parallel([
-      Animated.timing(scale, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.timing(translateX, {
-        toValue: targetX,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.timing(translateY, {
-        toValue: targetY,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-    ]).start();
-    scaleRef.current = 1;
-    translateRef.current = { x: targetX, y: targetY };
-  };
+    const handleRecenter = () => {
+ 
+        // No path visible → reset to default center
+        Animated.parallel([
+          Animated.timing(scale, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(translateX, {
+            toValue: initialX,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(translateY, {
+            toValue: initialY,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+        ]).start();
+
+        scaleRef.current = 1;
+        translateRef.current = { x: initialX, y: initialY };
+      
+    };
   // Extract path points from JSON 
   // Define floor-specific image dimensions
   const floorDimensions: Record<number, { width: number; height: number }> = {
